@@ -1,6 +1,9 @@
 package com.panda.mutithreading.controller;
 
 import com.panda.mutithreading.service.SyncService;
+import com.panda.mutithreading.vo.Demo2RequestVo;
+import com.panda.mutithreading.vo.Demo2ResponseVo;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,7 +15,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/sync")
+@Api
 public class SyncController {
     @Autowired
     private SyncService syncService;
@@ -25,5 +29,10 @@ public class SyncController {
         List<List<String>> collect1 = collect.stream().map(CompletableFuture::join).collect(Collectors.toList());
         System.out.println("总共花费时间"+(System.currentTimeMillis()-start)/1000+"秒");
         return collect1.toString();
+    }
+
+    @GetMapping("/list")
+    public List<Demo2ResponseVo> getDemo2List(Demo2RequestVo demo2RequestVo){
+        return syncService.getDemo2List(demo2RequestVo);
     }
 }
