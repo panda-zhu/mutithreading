@@ -46,34 +46,42 @@ public class SyncService {
         CompletableFuture<List<Integer>> age = CompletableFuture.supplyAsync(() -> {
             System.out.println("==========getAge开始执行！");
             try {
-                Thread.sleep(5000);
+                Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+            System.out.println("+++++++++++getAge结束执行！");
             return Arrays.asList(3, 4, 5, 6, 7, 8, 9);
         });
+        CompletableFuture<Void> voidCompletableFuture1 = age.thenAccept(list -> {
+            for (int i = 0; i < list.size(); i++) {
+                demo2ResponseVos.get(i).setAge(list.get(i));
+            }
+        });
+
         CompletableFuture<List<String>> sex = CompletableFuture.supplyAsync(()->{
             System.out.println("==========getSex开始执行！");
             try {
-                Thread.sleep(5000);
+                Thread.sleep(2000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            return Arrays.asList("nan", "nv", "nan", "nan", "nan", "nan", "nan");
+            System.out.println("+++++++++++getSex结束执行！");
+            return Arrays.asList("nan", "nv", "nan", "nan", "nv", "nan", "nv");
         });
-        CompletableFuture.anyOf(age,sex).whenComplete((r,e)->{
-            if(r instanceof List){
-
+        CompletableFuture<Void> voidCompletableFuture = sex.thenAccept(list -> {
+            for (int i = 0; i < list.size(); i++) {
+                demo2ResponseVos.get(i).setSex(list.get(i));
             }
         });
-//        try {
-//            System.out.println("==========="+voidCompletableFuture.get());
-//            System.out.println("花费时间"+(System.currentTimeMillis()-startTime));
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        } catch (ExecutionException e) {
-//            e.printStackTrace();
-//        }
+        try {
+            CompletableFuture.allOf(voidCompletableFuture1,voidCompletableFuture).get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
         return demo2ResponseVos;
     }
 
